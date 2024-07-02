@@ -1,24 +1,19 @@
--- Initialize Services
 local UIS = game:GetService("UserInputService")
 local StarterGui = game:GetService("StarterGui")
 
--- Create the ScreenGui
 local ScreenGui = Instance.new("ScreenGui")
 ScreenGui.Name = "KrakenMenu"
 ScreenGui.Parent = game.CoreGui
 
--- Create the main frame
 local MainFrame = Instance.new("Frame")
 MainFrame.Size = UDim2.new(0, 400, 0, 400)
 MainFrame.Position = UDim2.new(0.5, -200, 0.5, -200)
 MainFrame.BackgroundColor3 = Color3.fromRGB(30, 30, 30)
 MainFrame.Parent = ScreenGui
 
--- Create a UICorner for rounded edges
 local UICorner = Instance.new("UICorner")
 UICorner.Parent = MainFrame
 
--- Create a draggable header
 local Header = Instance.new("TextLabel")
 Header.Size = UDim2.new(1, 0, 0, 30)
 Header.BackgroundColor3 = Color3.fromRGB(50, 50, 50)
@@ -28,7 +23,6 @@ Header.Font = Enum.Font.GothamBold
 Header.TextSize = 20
 Header.Parent = MainFrame
 
--- Draggable functionality
 local dragging = false
 local dragInput, dragStart, startPos
 
@@ -63,7 +57,6 @@ UIS.InputChanged:Connect(function(input)
     end
 end)
 
--- Create Tab Buttons
 local Tabs = {"Visuals", "RageBot", "Misc", "Settings"}
 local Buttons = {}
 
@@ -80,7 +73,6 @@ for i, tab in ipairs(Tabs) do
     Buttons[tab] = Button
 end
 
--- Create a Close Button
 local CloseButton = Instance.new("TextButton")
 CloseButton.Size = UDim2.new(0, 30, 0, 30)
 CloseButton.Position = UDim2.new(1, -30, 0, 0)
@@ -91,7 +83,6 @@ CloseButton.Font = Enum.Font.GothamBold
 CloseButton.TextSize = 14
 CloseButton.Parent = MainFrame
 
--- Create a Notification function
 local function Notify(message)
     StarterGui:SetCore("SendNotification", {
         Title = "Kraken",
@@ -100,20 +91,17 @@ local function Notify(message)
     })
 end
 
--- Minimize functionality
 CloseButton.MouseButton1Click:Connect(function()
     MainFrame.Visible = false
     Notify("Kraken has been minimized")
 end)
 
--- Restore functionality
 UIS.InputBegan:Connect(function(input)
     if input.KeyCode == Enum.KeyCode.LeftShift then
         MainFrame.Visible = not MainFrame.Visible
     end
 end)
 
--- Create content frames for each tab
 local ContentFrames = {}
 for _, tab in ipairs(Tabs) do
     local Frame = Instance.new("Frame")
@@ -125,7 +113,6 @@ for _, tab in ipairs(Tabs) do
     ContentFrames[tab] = Frame
 end
 
--- Switch between tabs
 for tab, button in pairs(Buttons) do
     button.MouseButton1Click:Connect(function()
         for _, frame in pairs(ContentFrames) do
@@ -135,7 +122,6 @@ for tab, button in pairs(Buttons) do
     end)
 end
 
--- Helper function to create toggles
 local function CreateToggle(parent, text, callback)
     local Toggle = Instance.new("TextButton")
     Toggle.Size = UDim2.new(0, 200, 0, 30)
@@ -152,7 +138,6 @@ local function CreateToggle(parent, text, callback)
     end)
 end
 
--- Helper function to create sliders
 local function CreateSlider(parent, text, min, max, default, callback)
     local SliderFrame = Instance.new("Frame")
     SliderFrame.Size = UDim2.new(0, 200, 0, 30)
@@ -196,138 +181,134 @@ local function CreateSlider(parent, text, min, max, default, callback)
     end)
 end
 
--- Visuals Tab Content
 CreateToggle(ContentFrames["Visuals"], "Chams", function(state)
-    -- Enable or disable Chams
+--
 end)
 CreateSlider(ContentFrames["Visuals"], "Chams Range", 0, 1000, 500, function(value)
-    -- Set Chams range
+--
 end)
 CreateToggle(ContentFrames["Visuals"], "Boxes", function(state)
-    -- Enable or disable Boxes
+--
 end)
 CreateSlider(ContentFrames["Visuals"], "Boxes Range", 0, 1000, 500, function(value)
-    -- Set Boxes range
+--
 end)
 CreateToggle(ContentFrames["Visuals"], "Fullbright", function(state)
-    -- Enable or disable Fullbright
+--
 end)
 CreateSlider(ContentFrames["Visuals"], "Bullet Tracers Duration", 0, 10, 5, function(value)
-    -- Set Bullet Tracers duration
+--
 end)
 
--- RageBot Tab Content
+-- ragebot
 CreateToggle(ContentFrames["RageBot"], "HEAD Hitbox Extender", function(state)
-    -- Enable or disable HEAD Hitbox Extender
+--
 end)
 CreateToggle(ContentFrames["RageBot"], "Silent Aim", function(state)
-    -- Enable or disable Silent Aim
+--
 end)
 CreateSlider(ContentFrames["RageBot"], "Silent Aim FOV", 0, 360, 90, function(value)
-    -- Set Silent Aim FOV
+--
 end)
 CreateToggle(ContentFrames["RageBot"], "Predict", function(state)
-    -- Enable or disable Predict
+--
 end)
 CreateToggle(ContentFrames["RageBot"], "Long Neck", function(state)
-    -- Enable or disable Long Neck
+--
 end)
 CreateToggle(ContentFrames["RageBot"], "BHOP", function(state)
-    -- Enable or disable BHOP
+--
 end)
 CreateToggle(ContentFrames["RageBot"], "AlwShoot", function(state)
     -- Enable or disable Always Shoot
 end)
 
--- Misc Tab Content
+-- misc
 CreateToggle(ContentFrames["Misc"], "Custom Toggle", function(state)
-    -- Custom Toggle functionality
+--
 end)
 
--- Settings Tab Content
+-- setings
 CreateToggle(ContentFrames["Settings"], "Setting 1", function(state)
-    -- Setting 1 functionality
+--
 end)
 CreateToggle(ContentFrames["Settings"], "Setting 2", function(state)
-    -- Setting 2 functionality
+--
 end)
 
--- Show the first tab by default
 ContentFrames["Visuals"].Visible = true
 
--- Notification for initial load
-Notify("Kraken menu loaded. Press Left Shift to toggle.")
+Notify("kraken loaded press RSHIFT to toggle.")
 
--- Implement feature functionality
 local function enableChams(enable)
     if enable then
-        -- Add code to enable Chams
+--
     else
-        -- Add code to disable Chams
+--
     end
 end
 
 local function setChamsRange(range)
-    -- Add code to set Chams range
+--
 end
 
 local function enableBoxes(enable)
     if enable then
-        -- Add code to enable Boxes
+--
     else
-        -- Add code to disable Boxes
+--
     end
 end
 
 local function setBoxesRange(range)
-    -- Add code to set Boxes range
+--
 end
 
 local function enableFullbright(enable)
     if enable then
-        -- Add code to enable Fullbright
+--
     else
-        -- Add code to disable Fullbright
+--
     end
 end
 
 local function setBulletTracersDuration(duration)
-    -- Add code to set Bullet Tracers duration
+--
 end
 
 local function enableHitboxExtender(enable)
     if enable then
-        -- Add code to enable HEAD Hitbox Extender
+--
     else
-        -- Add code to disable HEAD Hitbox Extender
+--
     end
 end
 
 local function enableSilentAim(enable)
     if enable then
-        -- Add code to enable Silent Aim
+--
     else
-        -- Add code to disable Silent Aim
+--
     end
 end
 
 local function setSilentAimFOV(fov)
-    -- Add code to set Silent Aim FOV
+--
 end
 
 local function enablePredict(enable)
     if enable then
-        -- Add code to enable Predict
+--
     else
-        -- Add code to disable Predict
+--
     end
 end
 
 local function enableLongNeck(enable)
     if enable then
-        -- Add code to enable Long Neck
+--
     else
-        -- Add code to disable Long Neck
+--
     end
 end
 
