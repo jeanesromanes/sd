@@ -1,0 +1,347 @@
+local UIS = game:GetService("UserInputService")
+local StarterGui = game:GetService("StarterGui")
+
+local ScreenGui = Instance.new("ScreenGui")
+ScreenGui.Name = "KrakenMenu"
+ScreenGui.Parent = game.CoreGui
+
+local MainFrame = Instance.new("Frame")
+MainFrame.Size = UDim2.new(0, 400, 0, 400)
+MainFrame.Position = UDim2.new(0.5, -200, 0.5, -200)
+MainFrame.BackgroundColor3 = Color3.fromRGB(30, 30, 30)
+MainFrame.Parent = ScreenGui
+
+local UICorner = Instance.new("UICorner")
+UICorner.Parent = MainFrame
+
+local Header = Instance.new("TextLabel")
+Header.Size = UDim2.new(1, 0, 0, 30)
+Header.BackgroundColor3 = Color3.fromRGB(50, 50, 50)
+Header.Text = "KRAKEN"
+Header.TextColor3 = Color3.fromRGB(255, 255, 255)
+Header.Font = Enum.Font.GothamBold
+Header.TextSize = 20
+Header.Parent = MainFrame
+
+local dragging = false
+local dragInput, dragStart, startPos
+
+local function update(input)
+    local delta = input.Position - dragStart
+    MainFrame.Position = UDim2.new(startPos.X.Scale, startPos.X.Offset + delta.X, startPos.Y.Scale, startPos.Y.Offset + delta.Y)
+end
+
+Header.InputBegan:Connect(function(input)
+    if input.UserInputType == Enum.UserInputType.MouseButton1 then
+        dragging = true
+        dragStart = input.Position
+        startPos = MainFrame.Position
+
+        input.Changed:Connect(function()
+            if input.UserInputState == Enum.UserInputState.End then
+                dragging = false
+            end
+        end)
+    end
+end)
+
+Header.InputChanged:Connect(function(input)
+    if input.UserInputType == Enum.UserInputType.MouseMovement then
+        dragInput = input
+    end
+end)
+
+UIS.InputChanged:Connect(function(input)
+    if input == dragInput and dragging then
+        update(input)
+    end
+end)
+
+local Tabs = {"Visuals", "RageBot", "Misc", "Settings"}
+local Buttons = {}
+
+for i, tab in ipairs(Tabs) do
+    local Button = Instance.new("TextButton")
+    Button.Size = UDim2.new(0, 100, 0, 30)
+    Button.Position = UDim2.new(0, (i-1) * 100, 0, 30)
+    Button.BackgroundColor3 = Color3.fromRGB(50, 50, 50)
+    Button.Text = tab
+    Button.TextColor3 = Color3.fromRGB(255, 255, 255)
+    Button.Font = Enum.Font.Gotham
+    Button.TextSize = 14
+    Button.Parent = MainFrame
+    Buttons[tab] = Button
+end
+
+local CloseButton = Instance.new("TextButton")
+CloseButton.Size = UDim2.new(0, 30, 0, 30)
+CloseButton.Position = UDim2.new(1, -30, 0, 0)
+CloseButton.BackgroundColor3 = Color3.fromRGB(200, 50, 50)
+CloseButton.Text = "X"
+CloseButton.TextColor3 = Color3.fromRGB(255, 255, 255)
+CloseButton.Font = Enum.Font.GothamBold
+CloseButton.TextSize = 14
+CloseButton.Parent = MainFrame
+
+local function Notify(message)
+    StarterGui:SetCore("SendNotification", {
+        Title = "Kraken",
+        Text = message,
+        Duration = 5
+    })
+end
+
+CloseButton.MouseButton1Click:Connect(function()
+    MainFrame.Visible = false
+    Notify("Kraken has been minimized")
+end)
+
+UIS.InputBegan:Connect(function(input)
+    if input.KeyCode == Enum.KeyCode.RightShift then
+        MainFrame.Visible = not MainFrame.Visible
+    end
+end)
+
+local ContentFrames = {}
+for _, tab in ipairs(Tabs) do
+    local Frame = Instance.new("Frame")
+    Frame.Size = UDim2.new(1, 0, 1, -60)
+    Frame.Position = UDim2.new(0, 0, 0, 60)
+    Frame.BackgroundTransparency = 1
+    Frame.Visible = false
+    Frame.Parent = MainFrame
+    ContentFrames[tab] = Frame
+end
+
+for tab, button in pairs(Buttons) do
+    button.MouseButton1Click:Connect(function()
+        for _, frame in pairs(ContentFrames) do
+            frame.Visible = false
+        end
+        ContentFrames[tab].Visible = true
+    end)
+end
+
+local function CreateToggle(parent, text, callback)
+    local Toggle = Instance.new("TextButton")
+    Toggle.Size = UDim2.new(0, 200, 0, 30)
+    Toggle.BackgroundColor3 = Color3.fromRGB(60, 60, 60)
+    Toggle.Text = text
+    Toggle.TextColor3 = Color3.fromRGB(255, 255, 255)
+    Toggle.Font = Enum.Font.Gotham
+    Toggle.TextSize = 14
+    Toggle.Parent = parent
+
+    Toggle.MouseButton1Click:Connect(function()
+        Toggle.BackgroundColor3 = Toggle.BackgroundColor3 == Color3.fromRGB(60, 60, 60) and Color3.fromRGB(100, 100, 100) or Color3.fromRGB(60, 60, 60)
+        callback(Toggle.BackgroundColor3 == Color3.fromRGB(100, 100, 100))
+    end)
+end
+
+local function CreateSlider(parent, text, min, max, default, callback)
+    local SliderFrame = Instance.new("Frame")
+    SliderFrame.Size = UDim2.new(0, 200, 0, 30)
+    SliderFrame.BackgroundColor3 = Color3.fromRGB(60, 60, 60)
+    SliderFrame.Parent = parent
+
+    local SliderText = Instance.new("TextLabel")
+    SliderText.Size = UDim2.new(1, -30, 1, 0)
+    SliderText.BackgroundTransparency = 1
+    SliderText.Text = text .. ": " .. default
+    SliderText.TextColor3 = Color3.fromRGB(255, 255, 255)
+    SliderText.Font = Enum.Font.Gotham
+    SliderText.TextSize = 14
+    SliderText.Parent = SliderFrame
+
+    local Slider = Instance.new("TextButton")
+    Slider.Size = UDim2.new(0, 30, 1, 0)
+    Slider.Position = UDim2.new((default - min) / (max - min), 0, 0, 0)
+    Slider.BackgroundColor3 = Color3.fromRGB(100, 100, 100)
+    Slider.Text = ""
+    Slider.Parent = SliderFrame
+
+    local dragging = false
+    Slider.MouseButton1Down:Connect(function()
+        dragging = true
+    end)
+    UIS.InputEnded:Connect(function(input)
+        if input.UserInputType == Enum.UserInputType.MouseButton1 then
+            dragging = false
+        end
+    end)
+    UIS.InputChanged:Connect(function(input)
+        if dragging and input.UserInputType == Enum.UserInputType.MouseMovement then
+            local delta = input.Position.X - SliderFrame.AbsolutePosition.X
+            local position = math.clamp(delta / 170, 0, 1)
+            Slider.Position = UDim2.new(position, 0, 0, 0)
+            local value = min + position * (max - min)
+            SliderText.Text = text .. ": " .. math.floor(value)
+            callback(math.floor(value))
+        end
+    end)
+end
+
+CreateToggle(ContentFrames["Visuals"], "Chams", function(state)
+--
+end)
+CreateSlider(ContentFrames["Visuals"], "Chams Range", 0, 1000, 500, function(value)
+--
+end)
+CreateToggle(ContentFrames["Visuals"], "Boxes", function(state)
+--
+end)
+CreateSlider(ContentFrames["Visuals"], "Boxes Range", 0, 1000, 500, function(value)
+--
+end)
+CreateToggle(ContentFrames["Visuals"], "Fullbright", function(state)
+--
+end)
+CreateSlider(ContentFrames["Visuals"], "Bullet Tracers Duration", 0, 10, 5, function(value)
+--
+end)
+
+-- ragebot
+CreateToggle(ContentFrames["RageBot"], "HEAD Hitbox Extender", function(state)
+--
+end)
+CreateToggle(ContentFrames["RageBot"], "Silent Aim", function(state)
+--
+end)
+CreateSlider(ContentFrames["RageBot"], "Silent Aim FOV", 0, 360, 90, function(value)
+--
+end)
+CreateToggle(ContentFrames["RageBot"], "Predict", function(state)
+--
+end)
+CreateToggle(ContentFrames["RageBot"], "Long Neck", function(state)
+--
+end)
+CreateToggle(ContentFrames["RageBot"], "BHOP", function(state)
+--
+end)
+CreateToggle(ContentFrames["RageBot"], "AlwShoot", function(state)
+    -- Enable or disable Always Shoot
+end)
+
+-- misc
+CreateToggle(ContentFrames["Misc"], "Custom Toggle", function(state)
+--
+end)
+
+-- setings
+CreateToggle(ContentFrames["Settings"], "Setting 1", function(state)
+--
+end)
+CreateToggle(ContentFrames["Settings"], "Setting 2", function(state)
+--
+end)
+
+ContentFrames["Visuals"].Visible = true
+
+Notify("kraken loaded press RSHIFT to toggle.")
+
+local function enableChams(enable)
+    if enable then
+--
+    else
+--
+    end
+end
+
+local function setChamsRange(range)
+--
+end
+
+local function enableBoxes(enable)
+    if enable then
+--
+    else
+--
+    end
+end
+
+local function setBoxesRange(range)
+--
+end
+
+local function enableFullbright(enable)
+    if enable then
+--
+    else
+--
+    end
+end
+
+local function setBulletTracersDuration(duration)
+--
+end
+
+local function enableHitboxExtender(enable)
+    if enable then
+--
+    else
+--
+    end
+end
+
+local function enableSilentAim(enable)
+    if enable then
+--
+    else
+--
+    end
+end
+
+local function setSilentAimFOV(fov)
+--
+end
+
+local function enablePredict(enable)
+    if enable then
+--
+    else
+--
+    end
+end
+
+local function enableLongNeck(enable)
+    if enable then
+--
+    else
+--
+    end
+end
+
+local function enableBHOP(enable)
+    if enable then
+
+    else
+
+    end
+end
+
+local function enableAlwaysShoot(enable)
+    if enable then
+
+    else
+
+    end
+end
+
+
+CreateToggle(ContentFrames["Visuals"], "Chams", enableChams)
+CreateSlider(ContentFrames["Visuals"], "Chams Range", 0, 1000, 500, setChamsRange)
+CreateToggle(ContentFrames["Visuals"], "Boxes", enableBoxes)
+CreateSlider(ContentFrames["Visuals"], "Boxes Range", 0, 1000, 500, setBoxesRange)
+CreateToggle(ContentFrames["Visuals"], "Fullbright", enableFullbright)
+CreateSlider(ContentFrames["Visuals"], "Bullet Tracers Duration", 0, 10, 5, setBulletTracersDuration)
+CreateToggle(ContentFrames["RageBot"], "HEAD Hitbox Extender", enableHitboxExtender)
+CreateToggle(ContentFrames["RageBot"], "Silent Aim", enableSilentAim)
+CreateSlider(ContentFrames["RageBot"], "Silent Aim FOV", 0, 360, 90, setSilentAimFOV)
+CreateToggle(ContentFrames["RageBot"], "Predict", enablePredict)
+CreateToggle(ContentFrames["RageBot"], "Long Neck", enableLongNeck)
+CreateToggle(ContentFrames["RageBot"], "BHOP", enableBHOP)
+CreateToggle(ContentFrames["RageBot"], "AlwShoot", enableAlwaysShoot)
+CreateToggle(ContentFrames["Misc"], "Custom Toggle", function(state) end)
+CreateToggle(ContentFrames["Settings"], "Setting 1", function(state) end)
+CreateToggle(ContentFrames["Settings"], "Setting 2", function(state) end)
