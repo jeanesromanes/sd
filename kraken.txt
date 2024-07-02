@@ -93,7 +93,7 @@ end
 
 CloseButton.MouseButton1Click:Connect(function()
     MainFrame.Visible = false
-    Notify("Kraken has been minimized")
+    Notify("kraken is minimized (RSHIFT)")
 end)
 
 UIS.InputBegan:Connect(function(input)
@@ -122,226 +122,129 @@ for tab, button in pairs(Buttons) do
     end)
 end
 
-local function CreateToggle(parent, text, callback)
-    local Toggle = Instance.new("TextButton")
-    Toggle.Size = UDim2.new(0, 200, 0, 30)
-    Toggle.BackgroundColor3 = Color3.fromRGB(60, 60, 60)
-    Toggle.Text = text
-    Toggle.TextColor3 = Color3.fromRGB(255, 255, 255)
-    Toggle.Font = Enum.Font.Gotham
-    Toggle.TextSize = 14
-    Toggle.Parent = parent
-
-    Toggle.MouseButton1Click:Connect(function()
-        Toggle.BackgroundColor3 = Toggle.BackgroundColor3 == Color3.fromRGB(60, 60, 60) and Color3.fromRGB(100, 100, 100) or Color3.fromRGB(60, 60, 60)
-        callback(Toggle.BackgroundColor3 == Color3.fromRGB(100, 100, 100))
-    end)
-end
-
-local function CreateSlider(parent, text, min, max, default, callback)
-    local SliderFrame = Instance.new("Frame")
-    SliderFrame.Size = UDim2.new(0, 200, 0, 30)
-    SliderFrame.BackgroundColor3 = Color3.fromRGB(60, 60, 60)
-    SliderFrame.Parent = parent
-
-    local SliderText = Instance.new("TextLabel")
-    SliderText.Size = UDim2.new(1, -30, 1, 0)
-    SliderText.BackgroundTransparency = 1
-    SliderText.Text = text .. ": " .. default
-    SliderText.TextColor3 = Color3.fromRGB(255, 255, 255)
-    SliderText.Font = Enum.Font.Gotham
-    SliderText.TextSize = 14
-    SliderText.Parent = SliderFrame
-
-    local Slider = Instance.new("TextButton")
-    Slider.Size = UDim2.new(0, 30, 1, 0)
-    Slider.Position = UDim2.new((default - min) / (max - min), 0, 0, 0)
-    Slider.BackgroundColor3 = Color3.fromRGB(100, 100, 100)
-    Slider.Text = ""
-    Slider.Parent = SliderFrame
-
-    local dragging = false
-    Slider.MouseButton1Down:Connect(function()
-        dragging = true
-    end)
-    UIS.InputEnded:Connect(function(input)
-        if input.UserInputType == Enum.UserInputType.MouseButton1 then
-            dragging = false
-        end
-    end)
-    UIS.InputChanged:Connect(function(input)
-        if dragging and input.UserInputType == Enum.UserInputType.MouseMovement then
-            local delta = input.Position.X - SliderFrame.AbsolutePosition.X
-            local position = math.clamp(delta / 170, 0, 1)
-            Slider.Position = UDim2.new(position, 0, 0, 0)
-            local value = min + position * (max - min)
-            SliderText.Text = text .. ": " .. math.floor(value)
-            callback(math.floor(value))
-        end
-    end)
-end
-
-CreateToggle(ContentFrames["Visuals"], "Chams", function(state)
---
-end)
-CreateSlider(ContentFrames["Visuals"], "Chams Range", 0, 1000, 500, function(value)
---
-end)
-CreateToggle(ContentFrames["Visuals"], "Boxes", function(state)
---
-end)
-CreateSlider(ContentFrames["Visuals"], "Boxes Range", 0, 1000, 500, function(value)
---
-end)
-CreateToggle(ContentFrames["Visuals"], "Fullbright", function(state)
---
-end)
-CreateSlider(ContentFrames["Visuals"], "Bullet Tracers Duration", 0, 10, 5, function(value)
---
-end)
-
--- ragebot
-CreateToggle(ContentFrames["RageBot"], "HEAD Hitbox Extender", function(state)
---
-end)
-CreateToggle(ContentFrames["RageBot"], "Silent Aim", function(state)
---
-end)
-CreateSlider(ContentFrames["RageBot"], "Silent Aim FOV", 0, 360, 90, function(value)
---
-end)
-CreateToggle(ContentFrames["RageBot"], "Predict", function(state)
---
-end)
-CreateToggle(ContentFrames["RageBot"], "Long Neck", function(state)
---
-end)
-CreateToggle(ContentFrames["RageBot"], "BHOP", function(state)
---
-end)
-CreateToggle(ContentFrames["RageBot"], "AlwShoot", function(state)
-    -- Enable or disable Always Shoot
-end)
-
--- misc
-CreateToggle(ContentFrames["Misc"], "Custom Toggle", function(state)
---
-end)
-
--- setings
-CreateToggle(ContentFrames["Settings"], "Setting 1", function(state)
---
-end)
-CreateToggle(ContentFrames["Settings"], "Setting 2", function(state)
---
-end)
-
 ContentFrames["Visuals"].Visible = true
 
-Notify("kraken loaded press RSHIFT to toggle.")
+Notify("kraken has been loaded, RSHIFT to show/hide.")
 
-local function enableChams(enable)
-    if enable then
---
-    else
---
+local function AddComingSoonLabel(frame)
+    local ComingSoonLabel = Instance.new("TextLabel")
+    ComingSoonLabel.Size = UDim2.new(1, 0, 1, 0)
+    ComingSoonLabel.Position = UDim2.new(0, 0, 0, 0)
+    ComingSoonLabel.BackgroundTransparency = 1
+    ComingSoonLabel.Text = "COMING SOON"
+    ComingSoonLabel.TextColor3 = Color3.fromRGB(255, 255, 255)
+    ComingSoonLabel.Font = Enum.Font.GothamBold
+    ComingSoonLabel.TextSize = 30
+    ComingSoonLabel.TextWrapped = true
+    ComingSoonLabel.Parent = frame
+end
+
+for tab, frame in pairs(ContentFrames) do
+    if tab ~= "RageBot" and tab ~= "Visuals" then
+        AddComingSoonLabel(frame)
     end
 end
 
-local function setChamsRange(range)
---
-end
+-- VISUALS
+local VisualsTab = ContentFrames["Visuals"]
 
-local function enableBoxes(enable)
-    if enable then
---
-    else
---
+local ButtonSize = UDim2.new(0, 200, 0, 50)
+
+local NightVisionButton = Instance.new("TextButton")
+NightVisionButton.Size = ButtonSize
+NightVisionButton.Position = UDim2.new(0.5, -100, 0.1, -25)
+NightVisionButton.BackgroundColor3 = Color3.fromRGB(50, 50, 50)
+NightVisionButton.Text = "FullBright"
+NightVisionButton.TextColor3 = Color3.fromRGB(255, 255, 255)
+NightVisionButton.Font = Enum.Font.Gotham
+NightVisionButton.TextSize = 14
+NightVisionButton.Parent = VisualsTab
+
+NightVisionButton.MouseButton1Click:Connect(function()
+    local Light = game:GetService("Lighting")
+    local function dofullbright()
+        Light.Ambient = Color3.new(1, 1, 1)
+        Light.ColorShift_Bottom = Color3.new(1, 1, 1)
+        Light.ColorShift_Top = Color3.new(1, 1, 1)
     end
-end
+    dofullbright()
+    Light.LightingChanged:Connect(dofullbright)
+    NightVisionButton.Text = "FullBright (ENABLED)"
+    NightVisionButton.TextColor3 = Color3.new(1, 0, 0)
+end)
 
-local function setBoxesRange(range)
---
-end
+local CrosshairButton = Instance.new("TextButton")
+CrosshairButton.Size = ButtonSize
+CrosshairButton.Position = UDim2.new(0.5, -100, 0.3, -25)
+CrosshairButton.BackgroundColor3 = Color3.fromRGB(50, 50, 50)
+CrosshairButton.Text = "Crosshair"
+CrosshairButton.TextColor3 = Color3.fromRGB(255, 255, 255)
+CrosshairButton.Font = Enum.Font.Gotham
+CrosshairButton.TextSize = 14
+CrosshairButton.Parent = VisualsTab
 
-local function enableFullbright(enable)
-    if enable then
---
-    else
---
-    end
-end
+CrosshairButton.MouseButton1Click:Connect(function()
+    local Crosshair = Instance.new("ScreenGui", game.CoreGui)
+    local CrosshairPart1 = Instance.new("Frame")
+    CrosshairPart1.Size = UDim2.new(0, 2, 0, 20)
+    CrosshairPart1.Position = UDim2.new(0.5, -1, 0.5, -10)
+    CrosshairPart1.BackgroundColor3 = Color3.new(1, 0, 0)
+    CrosshairPart1.Parent = Crosshair
 
-local function setBulletTracersDuration(duration)
---
-end
+    local CrosshairPart2 = Instance.new("Frame")
+    CrosshairPart2.Size = UDim2.new(0, 2, 0, 20)
+    CrosshairPart2.Position = UDim2.new(0.5, -1, 0.5, -10)
+    CrosshairPart2.Rotation = 90
+    CrosshairPart2.BackgroundColor3 = Color3.new(1, 0, 0)
+    CrosshairPart2.Parent = Crosshair
 
-local function enableHitboxExtender(enable)
-    if enable then
---
-    else
---
-    end
-end
+    local CrosshairPart3 = Instance.new("Frame")
+    CrosshairPart3.Size = UDim2.new(0, 2, 0, 20)
+    CrosshairPart3.Position = UDim2.new(0.5, -1, 0.5, -10)
+    CrosshairPart3.Rotation = 45
+    CrosshairPart3.BackgroundColor3 = Color3.new(1, 0, 0)
+    CrosshairPart3.Parent = Crosshair
 
-local function enableSilentAim(enable)
-    if enable then
---
-    else
---
-    end
-end
+    local CrosshairPart4 = Instance.new("Frame")
+    CrosshairPart4.Size = UDim2.new(0, 2, 0, 20)
+    CrosshairPart4.Position = UDim2.new(0.5, -1, 0.5, -10)
+    CrosshairPart4.Rotation = -45
+    CrosshairPart4.BackgroundColor3 = Color3.new(1, 0, 0)
+    CrosshairPart4.Parent = Crosshair
 
-local function setSilentAimFOV(fov)
---
-end
+    CrosshairButton.Text = "Crosshair (ENABLED)"
+    CrosshairButton.TextColor3 = Color3.new(1, 0, 0)
+end)
 
-local function enablePredict(enable)
-    if enable then
---
-    else
---
-    end
-end
+local HitlogButton = Instance.new("TextButton")
+HitlogButton.Size = ButtonSize
+HitlogButton.Position = UDim2.new(0.5, -100, 0.5, -25)
+HitlogButton.BackgroundColor3 = Color3.fromRGB(50, 50, 50)
+HitlogButton.Text = "Hitlog"
+HitlogButton.TextColor3 = Color3.fromRGB(255, 255, 255)
+HitlogButton.Font = Enum.Font.Gotham
+HitlogButton.TextSize = 14
+HitlogButton.Parent = VisualsTab
 
-local function enableLongNeck(enable)
-    if enable then
---
-    else
---
-    end
-end
+HitlogButton.MouseButton1Click:Connect(function()
+    loadstring(game:HttpGet("https://raw.githubusercontent.com/githubscripting/TridentSurvival.v0.1/main/hitlog.lua"))()
+    HitlogButton.Text = "Hitlogs (ENABLED)"
+    HitlogButton.TextColor3 = Color3.new(1, 0, 0)
+end)
 
-local function enableBHOP(enable)
-    if enable then
+-- RAGEBOT
+local RageBotTab = ContentFrames["RageBot"]
 
-    else
+local RageButton = Instance.new("TextButton")
+RageButton.Size = ButtonSize
+RageButton.Position = UDim2.new(0.5, -100, 0.1, -25)
+RageButton.BackgroundColor3 = Color3.fromRGB(50, 50, 50)
+RageButton.Text = "hitbox+esp (click once)"
+RageButton.TextColor3 = Color3.fromRGB(255, 255, 255)
+RageButton.Font = Enum.Font.Gotham
+RageButton.TextSize = 14
+RageButton.Parent = RageBotTab
 
-    end
-end
-
-local function enableAlwaysShoot(enable)
-    if enable then
-
-    else
-
-    end
-end
-
-
-CreateToggle(ContentFrames["Visuals"], "Chams", enableChams)
-CreateSlider(ContentFrames["Visuals"], "Chams Range", 0, 1000, 500, setChamsRange)
-CreateToggle(ContentFrames["Visuals"], "Boxes", enableBoxes)
-CreateSlider(ContentFrames["Visuals"], "Boxes Range", 0, 1000, 500, setBoxesRange)
-CreateToggle(ContentFrames["Visuals"], "Fullbright", enableFullbright)
-CreateSlider(ContentFrames["Visuals"], "Bullet Tracers Duration", 0, 10, 5, setBulletTracersDuration)
-CreateToggle(ContentFrames["RageBot"], "HEAD Hitbox Extender", enableHitboxExtender)
-CreateToggle(ContentFrames["RageBot"], "Silent Aim", enableSilentAim)
-CreateSlider(ContentFrames["RageBot"], "Silent Aim FOV", 0, 360, 90, setSilentAimFOV)
-CreateToggle(ContentFrames["RageBot"], "Predict", enablePredict)
-CreateToggle(ContentFrames["RageBot"], "Long Neck", enableLongNeck)
-CreateToggle(ContentFrames["RageBot"], "BHOP", enableBHOP)
-CreateToggle(ContentFrames["RageBot"], "AlwShoot", enableAlwaysShoot)
-CreateToggle(ContentFrames["Misc"], "Custom Toggle", function(state) end)
-CreateToggle(ContentFrames["Settings"], "Setting 1", function(state) end)
-CreateToggle(ContentFrames["Settings"], "Setting 2", function(state) end)
+RageButton.MouseButton1Click:Connect(function()
+    loadstring(game:HttpGet("https://raw.githubusercontent.com/githubscripting/TridentSurvival.v0.1/main/HB-HEAD-7.lua", true))()
+end)
