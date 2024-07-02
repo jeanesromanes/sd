@@ -97,7 +97,7 @@ CloseButton.MouseButton1Click:Connect(function()
 end)
 
 UIS.InputBegan:Connect(function(input)
-    if input.KeyCode == Enum.KeyCode.LeftShift then
+    if input.KeyCode == Enum.KeyCode.RightShift then
         MainFrame.Visible = not MainFrame.Visible
     end
 end)
